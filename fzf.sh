@@ -303,7 +303,7 @@ fzf-git-log() {
 }
 
 # Interactive git branch delete (local only)
-fzf-git-del() {
+_fzf-git-del() {
     local branch
     branch=$(git branch | grep -v HEAD | sed 's/^..//' | sort -u | fzf --header='[delete:local branch]')
     if [ -n "$branch" ]; then
@@ -318,8 +318,7 @@ fzf-git-del() {
         fi
     fi
 }
-alias fzf-git-del='fzf-git-del'
-
+alias fzf-git-del='_fzf-git-del'
 # Interactive command history search
 fzf-history() {
     local cmd
