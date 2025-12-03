@@ -1,0 +1,77 @@
+name: CI Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test-bash:
+    name: Test with Bash
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install dependencies (Ubuntu)
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y bash fd-find ripgrep bat
+    
+    - name: Install dependencies (macOS)
+      if: runner.os == 'macOS'
+      run: |
+        brew install bash fd ripgrep bat
+    
+    - name: Test shellkit with bash
+      shell: bash
+      run: |
+        export SHELLKIT_VERBOSE=1
+        source ./init.sh
+        ./tests/test.sh
+  
+  test-zsh:
+    name: Test with Zsh
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install dependencies (Ubuntu)
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y zsh fd-find ripgrep bat
+    
+    - name: Install dependencies (macOS)
+      if: runner.os == 'macOS'
+      run: |
+        brew install zsh fd ripgrep bat
+    
+    - name: Test shellkit with zsh
+      shell: zsh {0}
+      run: |
+        export SHELLKIT_VERBOSE=1
+        source ./init.sh
+        ./tests/test.sh
+  
+  shellcheck:
+    name: ShellCheck Linting
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Run ShellCheck
+      uses: ludeeus/action-shellcheck@master
+      with:
+        ignore_paths: tests
+        severity: warning

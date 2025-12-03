@@ -1,0 +1,24 @@
+# Local configuration files (not to be committed)
+local.sh
+.env.local
+
+# Editor and IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# OS files
+Thumbs.db
+.Spotlight-V100
+.Trashes

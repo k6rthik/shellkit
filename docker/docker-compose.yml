@@ -1,0 +1,33 @@
+services:
+  # Test with bash
+  shellkit-bash:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: shellkit-test-bash
+    image: shellkit:test
+    command: bash -l
+    stdin_open: true
+    tty: true
+    volumes:
+      - ..:/home/testuser/shellkit:ro
+    environment:
+      - SHELLKIT_VERBOSE=1
+      - TERM=xterm-256color
+
+  # Test with zsh
+  shellkit-zsh:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: shellkit-test-zsh
+    image: shellkit:test
+    command: zsh -l
+    stdin_open: true
+    tty: true
+    volumes:
+      - ..:/home/testuser/shellkit:ro
+    environment:
+      - SHELLKIT_VERBOSE=1
+      - TERM=xterm-256color
+      - SHELL=/bin/zsh
