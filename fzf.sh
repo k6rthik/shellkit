@@ -304,9 +304,14 @@ fzf-git-log() {
 
 # Interactive git branch delete (local only)
 _fzf-git-del() {
-    local branch
-    branch=$(git branch | grep -v HEAD | sed 's/^..//' | sort -u | fzf --multi --header='[delete:local branch]')
-    if [ -n "$branch" ]; then
+    local branches branch confirm
+    branches=$(git branch | grep -v HEAD | sed 's/^..//' | sort -u | fzf --multi --header='[delete:local branch]')
+    if [ -z "$branches" ]; then
+        return 1
+    fi
+    # Loop over each selected branch
+    while IFS= read -r branch; do
+        [ -z "$branch" ] && continue
         echo "\nReview branch: $branch"
         git log -1 --pretty=format:"%C(auto)%h %C(bold blue)%an %C(reset)%ar %C(bold yellow)%s" "$branch"
         echo
@@ -314,9 +319,9 @@ _fzf-git-del() {
         if [[ "$confirm" =~ ^[Yy]$ ]]; then
             git branch -D "$branch"
         else
-            echo "Aborted."
+            echo "Aborted deletion of '$branch'."
         fi
-    fi
+    done <<< "$branches"
 }
 alias fzf-git-del='_fzf-git-del'
 # Interactive command history search
