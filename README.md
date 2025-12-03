@@ -77,7 +77,7 @@ Not tracked in git:
 
 ```bash
 # Clone to your preferred location
-git clone <your-repo-url> ~/.shellkit
+git clone https://github.com/k6rthik/shellkit.git ~/.shellkit
 
 # Or if already in a directory
 cd ~/path/to/shellkit
