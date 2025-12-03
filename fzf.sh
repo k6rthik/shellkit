@@ -302,6 +302,24 @@ fzf-git-log() {
         --bind "enter:execute:echo {} | grep -o '[a-f0-9]\{7\}' | head -1 | xargs git show | less -R"
 }
 
+# Interactive git branch delete (local only)
+fzf-git-del() {
+    local branch
+    branch=$(git branch | grep -v HEAD | sed 's/^..//' | sort -u | fzf --header='[delete:local branch]')
+    if [ -n "$branch" ]; then
+        echo "\nReview branch: $branch"
+        git log -1 --pretty=format:"%C(auto)%h %C(bold blue)%an %C(reset)%ar %C(bold yellow)%s" "$branch"
+        echo
+        read -p "Delete local branch '$branch'? [y/N]: " confirm
+        if [[ "$confirm" =~ ^[Yy]$ ]]; then
+            git branch -D "$branch"
+        else
+            echo "Aborted."
+        fi
+    fi
+}
+alias fzf-git-del='fzf-git-del'
+
 # Interactive command history search
 fzf-history() {
     local cmd
