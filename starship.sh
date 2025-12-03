@@ -38,7 +38,11 @@ function set_win_title() {
 #fi
 
 starship_precmd_user_func="set_win_title"
-eval "$(starship init bash)"
+if [ -n "$ZSH_VERSION" ]; then
+  eval "$(starship init zsh)"
+else
+  eval "$(starship init bash)"
+fi
 if [[ -n "$WT_PROFILE_ID" ]]; then
   trap 'set_win_title "${BASH_COMMAND}"' DEBUG > /tmp/ltrap
 fi

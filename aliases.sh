@@ -85,11 +85,6 @@ alias localip="ip addr show | grep 'inet ' | grep -v 127.0.0.1 | awk '{print \$2
 alias mkdir='mkdir -pv'
 alias wget='wget -c'
 
-# Editor
-if command -v code &> /dev/null; then
-    alias vs='code -r'
-fi
-
 # SSH tunneling
 alias lhr='ssh -o ServerAliveInterval=60 -R 80:localhost:4005 localhost.run'
 
