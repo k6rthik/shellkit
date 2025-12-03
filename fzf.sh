@@ -305,7 +305,7 @@ fzf-git-log() {
 # Interactive git branch delete (local only)
 _fzf-git-del() {
     local branch
-    branch=$(git branch | grep -v HEAD | sed 's/^..//' | sort -u | fzf --header='[delete:local branch]')
+    branch=$(git branch | grep -v HEAD | sed 's/^..//' | sort -u | fzf --multi --header='[delete:local branch]')
     if [ -n "$branch" ]; then
         echo "\nReview branch: $branch"
         git log -1 --pretty=format:"%C(auto)%h %C(bold blue)%an %C(reset)%ar %C(bold yellow)%s" "$branch"
