@@ -11,6 +11,7 @@ A portable, modular shell configuration framework for bash and zsh that works se
 ## Table of Contents
 
 - [Quick Start Guide](QUICKSTART.md) ⚡
+- [Aliases Reference](docs/ALIASES.md) 📚
 - [Overview](#overview)
 - [Features](#features)
 - [Installation](#installation)
@@ -138,6 +139,8 @@ Define your command shortcuts here. Includes common aliases for:
 - Docker commands (`dps`, `dex`, etc.)
 - System monitoring and utilities
 
+> 📖 **See [Aliases Reference](docs/ALIASES.md) for a complete list of all available aliases.**
+
 **Example:**
 ```bash
 alias myproject='cd ~/projects/myapp'
@@ -215,6 +218,10 @@ Configures fuzzy finding with fzf for interactive workflows:
 - `Ctrl-T`: Fuzzy file finder
 - `Ctrl-R`: Command history search
 - `Alt-C`: Fuzzy directory navigation
+
+**FZF Aliases:** All FZF-powered aliases use the `fz` prefix (e.g., `fzf`, `fzcd`, `fzb`, `fzp`).
+
+> 📖 **See [Aliases Reference](docs/ALIASES.md#fzf-powered-aliases) for complete FZF alias documentation.**
 - `Ctrl-G`: Git branch selector
 - `Ctrl-P`: Project switcher
 - `Ctrl-K`: Interactive process killer
@@ -699,6 +706,7 @@ MIT License - See [LICENSE](LICENSE) file for details.
 ## Support
 
 - 📖 Read the [documentation](README.md)
+- 📚 Browse [all available aliases](docs/ALIASES.md)
 - 🐛 Report bugs via [GitHub Issues](https://github.com/YOUR-USERNAME/shellkit/issues)
 - 💡 Request features via [GitHub Issues](https://github.com/YOUR-USERNAME/shellkit/issues)
 - 💬 Join discussions on [GitHub Discussions](https://github.com/YOUR-USERNAME/shellkit/discussions)
@@ -711,6 +719,8 @@ MIT License - See [LICENSE](LICENSE) file for details.
 - The `mkcd` function is a game-changer for creating and entering directories
 - Set `SHELLKIT_VERBOSE=1` in your shell config for debugging
 - Use tab completion - most functions support it!
+- Browse all aliases with `fzf-alias` or check the [Aliases Reference](docs/ALIASES.md)
+- All FZF aliases now use the `fz` prefix for consistency (e.g., `fzf`, `fzcd`, `fzb`)
 
 ## Recommended Tools
 

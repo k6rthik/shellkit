@@ -114,22 +114,22 @@ fi
 
 # Custom key bindings for fzf functions
 
-# FZF-powered aliases
-alias checkout='git switch $(git branch | sed '\''s/^..//'\'' | fzf)'
-alias f='fzf-file'           # Quick file search and edit
-alias fcd='fzf-cd'            # Quick cd with preview
-alias fkill='fzf-kill'        # Interactive process killer
-alias fgb='fzf-git-branch'    # Interactive git branch checkout
-alias fgl='fzf-git-log'       # Interactive git log
-alias fh='fzf-history'        # Interactive history search
-alias fp='fzf-project'        # Quick project switcher
-alias fd-container='fzf-docker'  # Interactive docker container shell
-alias frg='fzf-rg'            # Search in files and edit
+# FZF-powered aliases (all prefixed with 'fz' for consistency)
+alias fzco='git switch $(git branch | sed '\''s/^..//'\'' | fzf)'  # Git checkout branch
+alias fzf='fzf-file'          # Quick file search and edit
+alias fzcd='fzf-cd'           # Quick cd with preview
+alias fzk='fzf-kill'          # Interactive process killer
+alias fzb='fzf-git-branch'    # Interactive git branch checkout
+alias fzl='fzf-git-log'       # Interactive git log
+alias fzh='fzf-history'       # Interactive history search
+alias fzp='fzf-project'       # Quick project switcher
+alias fzd='fzf-docker'        # Interactive docker container shell
+alias fzrg='fzf-rg'           # Search in files and edit
 
 # Key bindings (only in interactive shells)
 if [[ $- == *i* ]]; then
 
-# ALT-F to open file finder
+# ALT-F to open file finder (fzf alias)
 if [ -n "$BASH_VERSION" ]; then
     bind -x '"\ef": fzf-file'
 elif [ -n "$ZSH_VERSION" ]; then
@@ -141,7 +141,7 @@ elif [ -n "$ZSH_VERSION" ]; then
     bindkey '\ef' _fzf_file_widget
 fi
 
-# ALT-D to open directory finder and cd
+# ALT-D to open directory finder and cd (fzcd alias)
 if [ -n "$BASH_VERSION" ]; then
     bind -x '"\ed": fzf-cd'
 elif [ -n "$ZSH_VERSION" ]; then
@@ -153,7 +153,7 @@ elif [ -n "$ZSH_VERSION" ]; then
     bindkey '\ed' _fzf_cd_widget
 fi
 
-# CTRL-G to open git branch selector (or ALT-G)
+# CTRL-G to open git branch selector (or ALT-G) - fzb alias
 if [ -n "$BASH_VERSION" ]; then
     bind -x '"\C-g": fzf-git-branch'
     bind -x '"\eg": fzf-git-branch'
@@ -167,7 +167,7 @@ elif [ -n "$ZSH_VERSION" ]; then
     bindkey '\eg' _fzf_git_branch_widget
 fi
 
-# CTRL-P to open project selector (or ALT-P)
+# CTRL-P to open project selector (or ALT-P) - fzp alias
 if [ -n "$BASH_VERSION" ]; then
     bind -x '"\C-p": fzf-project'
     bind -x '"\ep": fzf-project'
@@ -181,7 +181,7 @@ elif [ -n "$ZSH_VERSION" ]; then
     bindkey '\ep' _fzf_project_widget
 fi
 
-# ALT-K to open process killer
+# ALT-K to open process killer (fzk alias)
 if [ -n "$BASH_VERSION" ]; then
     bind -x '"\ek": fzf-kill'
 elif [ -n "$ZSH_VERSION" ]; then
