@@ -315,7 +315,12 @@ _fzf-git-del() {
         echo "\nReview branch: $branch"
         git log -1 --pretty=format:"%C(auto)%h %C(bold blue)%an %C(reset)%ar %C(bold yellow)%s" "$branch"
         echo
-        read -p "Delete local branch '$branch'? [y/N]: " confirm
+        # Cross-shell compatible prompt
+        if [ -n "$ZSH_VERSION" ]; then
+            read "confirm?Delete local branch '$branch'? [y/N]: "
+        else
+            read -p "Delete local branch '$branch'? [y/N]: " confirm
+        fi
         if [[ "$confirm" =~ ^[Yy]$ ]]; then
             git branch -D "$branch"
         else
