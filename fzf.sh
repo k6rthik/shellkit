@@ -116,7 +116,9 @@ fi
 
 # FZF-powered aliases (all prefixed with 'fz' for consistency)
 alias fzco='git switch $(git branch | sed '\''s/^..//'\'' | fzf)'  # Git checkout branch
-alias fzf='fzf-file'          # Quick file search and edit
+# Note: 'fzf' command is not aliased to avoid shadowing the actual fzf binary
+# Use 'fzff' alias instead for the file finder function
+alias fzff='fzf-file'         # Quick file search and edit
 alias fzcd='fzf-cd'           # Quick cd with preview
 alias fzk='fzf-kill'          # Interactive process killer
 alias fzb='fzf-git-branch'    # Interactive git branch checkout
@@ -312,15 +314,13 @@ _fzf-git-del() {
     # Loop over each selected branch
     while IFS= read -r branch; do
         [ -z "$branch" ] && continue
-        echo "\nReview branch: $branch"
+        echo
+        echo "Review branch: $branch"
         git log -1 --pretty=format:"%C(auto)%h %C(bold blue)%an %C(reset)%ar %C(bold yellow)%s" "$branch"
         echo
-        # Cross-shell compatible prompt
-        if [ -n "$ZSH_VERSION" ]; then
-            read "confirm?Delete local branch '$branch'? [y/N]: "
-        else
-            read -p "Delete local branch '$branch'? [y/N]: " confirm
-        fi
+        # Cross-shell compatible prompt - using printf and read from stdin
+        printf "Delete local branch '%s'? [y/N]: " "$branch"
+        read confirm </dev/tty
         if [[ "$confirm" =~ ^[Yy]$ ]]; then
             git branch -D "$branch"
         else
