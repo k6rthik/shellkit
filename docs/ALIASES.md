@@ -210,7 +210,7 @@ Interactive fuzzy finding aliases for enhanced productivity. All FZF aliases use
 | `fzga` | `fzf_git_add` | - | Interactive git add (stage files) |
 | `fzgbc` | `fzf_git_branch_checkout` | `Ctrl-G`, `Alt-G` | Interactive git branch checkout (local + remote) |
 | `fzgd` | `fzf_git_diff` | - | Interactive git diff (unstaged changes) |
-| `fzgdc` | `fzf_git_diff_cached` | - | Interactive git diff (staged changes) |
+| `fzgdc` | `fzf_git_diff --cached` | - | Interactive git diff (staged changes) |
 | `fzgl` | `fzf_git_log` | - | Interactive git log browser |
 | `fzgbd` | `fzf_git_branch_delete` | - | Interactive git branch delete with -y option |
 | `fzgr` | `fzf_git_reset_staged` | - | Interactive git reset (unstage files) |
@@ -229,8 +229,7 @@ Additional FZF-powered functions available as commands (not aliases).
 |----------|-------------|-------|
 | `vs` | Open file in VS Code with fuzzy finder | `vs` (no args opens picker) |
 | `fzf_git_files` | List git modified/cached/untracked files with preview | `fzf_git_files` |
-| `fzf_git_diff` | Interactive git diff file picker (unstaged) | `fzgd` or `fzf_git_diff` |
-| `fzf_git_diff_cached` | Interactive git diff file picker (staged) | `fzgdc` or `fzf_git_diff_cached` |
+| `fzf_git_diff` | Interactive git diff file picker | `fzgd` (unstaged) or `fzgdc` (staged) or `fzf_git_diff [--cached]` |
 | `fzf_git_add` | Interactive git add (select files to stage) | `fzga` or `fzf_git_add` |
 | `fzf_git_branch_delete` | Interactive git branch delete with -y option | `fzgbd` or `fzf_git_branch_delete [-y]` |
 | `fzf_alias` | Browse and search shell aliases | `fzf-alias` |

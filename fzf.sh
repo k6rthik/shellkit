@@ -233,14 +233,18 @@ fzf_git_files() {
     } | sort -u | fzf --multi --preview 'git diff --cached --color=always -- {} 2>/dev/null || git diff --color=always -- {} 2>/dev/null || bat --color=always {} 2>/dev/null || cat {}'
 }
 
-# Git diff file picker (unstaged changes)
+# Interactive git diff file picker (supports --cached flag for staged changes)
 fzf_git_diff() {
-    git diff --name-only | fzf --multi --preview 'git diff --color=always -- {}'
-}
-
-# Git cached diff file picker (staged changes)
-fzf_git_diff_cached() {
-    git diff --name-only --cached | fzf --multi --preview 'git diff --cached --color=always -- {}'
+    local cached_flag=""
+    local header="[diff:unstaged changes]"
+    
+    # Check if --cached flag is passed
+    if [[ "$1" == "--cached" ]]; then
+        cached_flag="--cached"
+        header="[diff:staged changes]"
+    fi
+    
+    git diff --name-only $cached_flag | fzf --multi --preview "git diff $cached_flag --color=always -- {}" --header="$header"
 }
 
 # Interactive git add (pick modified files to stage)
@@ -476,7 +480,7 @@ alias fzga='fzf_git_add'          # Interactive git add (stage files)
 alias fzgbc='fzf_git_branch_checkout'            # Interactive git branch checkout
 alias fzgbd='fzf_git_branch_delete'              # Interactive git branch delete
 alias fzgd='fzf_git_diff'     # Interactive git diff (unstaged)
-alias fzgdc='fzf_git_diff_cached'                # Interactive git diff (staged)
+alias fzgdc='fzf_git_diff --cached'              # Interactive git diff (staged)
 alias fzgl='fzf_git_log'      # Interactive git log browser
 alias fzgr='fzf_git_reset_staged'                # Interactive git reset (unstage files)
 alias fzh='fzf_history'       # Interactive history search
