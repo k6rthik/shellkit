@@ -61,7 +61,6 @@ alias gl='git log --oneline --graph --decorate'
 alias gd='git diff'
 alias gco='git checkout'
 alias gb='git branch'
-alias greset='git reset HEAD $(git diff --cached --name-only); git status'
 
 # Docker aliases
 alias d='docker'
@@ -112,8 +111,8 @@ alias vimrc='${EDITOR:-vim} ~/.vimrc'
 alias reload='source ~/.${SHELLKIT_SHELL}rc'
 
 # Clear screen
-alias c='clear'
-alias cl='clear && ls'
+alias clr='clear'
+alias clrs='clear && ls'
 
 # Package management (conditional based on OS)
 if command -v apt-get &> /dev/null; then

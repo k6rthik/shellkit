@@ -65,9 +65,10 @@ extract file.tar.gz
 
 ### Git Integration
 ```bash
-gfiles          # Pick git files
-gdiff           # Git diff picker
-gadd            # Interactive git add
+fzf_git_files   # Pick git files
+fzgd            # Git diff picker (unstaged)
+fzgdc           # Git diff picker (staged)
+fzga            # Interactive git add
 ```
 
 ## Development Workflow

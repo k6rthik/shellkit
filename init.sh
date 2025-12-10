@@ -13,6 +13,10 @@ elif [ -n "$ZSH_VERSION" ]; then
     export SHELLKIT_SHELL="zsh"
 else
     export SHELLKIT_SHELL="unknown"
+
+
+
+    
 fi
 
 # Function to safely source a file if it exists

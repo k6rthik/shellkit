@@ -28,13 +28,13 @@ fi
 echo "✓ Test 3: Testing aliases"
 alias | grep -q "ll=" && echo "  ✓ ll alias exists"
 alias | grep -q "gs=" && echo "  ✓ gs (git status) alias exists"
-command -v fzf &> /dev/null && alias | grep -q "checkout=" && echo "  ✓ checkout alias exists"
+command -v fzf &> /dev/null && alias | grep -q "fzgbc=" && echo "  ✓ fzgbc (git branch checkout) alias exists"
 
 # Test 4: Test functions
 echo "✓ Test 4: Testing functions"
 type extract &> /dev/null && echo "  ✓ extract function exists"
 type mkcd &> /dev/null && echo "  ✓ mkcd function exists"
-command -v fzf &> /dev/null && type fzf-file &> /dev/null && echo "  ✓ fzf-file function exists"
+command -v fzf &> /dev/null && type fzf_file &> /dev/null && echo "  ✓ fzf_file function exists"
 
 # Test 5: Test PATH modifications
 echo "✓ Test 5: Testing PATH"
@@ -70,8 +70,10 @@ echo
 echo "Try these commands:"
 echo "  ll          - List files"
 echo "  gs          - Git status"
-echo "  f           - FZF file picker (if fzf installed)"
-echo "  fh          - FZF history search"
+echo "  fzff        - FZF file picker (if fzf installed)"
+echo "  fzh         - FZF history search"
+echo "  fzgbc       - FZF git branch checkout"
+echo "  fzgl        - FZF git log browser"
 echo "  extract     - Extract archives"
 echo "  mkcd test   - Create and cd into directory"
 echo "  showpath    - Show PATH in readable format"

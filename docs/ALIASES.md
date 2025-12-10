@@ -73,6 +73,7 @@ Shortcuts for common git operations.
 | `gco` | `git checkout` | Checkout branch/file |
 | `gb` | `git branch` | List/create branches |
 | `greset` | `git reset HEAD $(git diff --cached --name-only); git status` | Unstage all files |
+| `fzgr` | `fzf_git_reset_staged` | Interactive unstage with preview - select staged files and run `git reset HEAD -- <file>` |
 
 ---
 
@@ -202,16 +203,21 @@ Interactive fuzzy finding aliases for enhanced productivity. All FZF aliases use
 
 | Alias | Function | Key Binding | Description |
 |-------|----------|-------------|-------------|
-| `fzco` | `fzf-git-branch` | - | Interactive git branch checkout |
-| `fzf` | `fzf-file` | `Alt-F` | Search and edit file |
-| `fzcd` | `fzf-cd` | `Alt-D` | Interactive directory navigation |
-| `fzk` | `fzf-kill` | `Alt-K` | Interactive process killer |
-| `fzb` | `fzf-git-branch` | `Ctrl-G`, `Alt-G` | Interactive git branch checkout |
-| `fzl` | `fzf-git-log` | - | Interactive git log browser |
-| `fzh` | `fzf-history` | `Ctrl-R` (native) | Interactive command history search |
-| `fzp` | `fzf-project` | `Ctrl-P`, `Alt-P` | Quick project directory switcher |
-| `fzd` | `fzf-docker` | - | Interactive docker container shell |
-| `fzrg` | `fzf-rg` | - | Search file contents and edit |
+| `fzco` | Inline git switch | - | Interactive git branch checkout (simple) |
+| `fzff` | `fzf_file` | `Alt-F` | Search and edit file |
+| `fzcd` | `fzf_cd` | `Alt-D` | Interactive directory navigation |
+| `fzk` | `fzf_kill` | `Alt-K` | Interactive process killer |
+| `fzga` | `fzf_git_add` | - | Interactive git add (stage files) |
+| `fzgbc` | `fzf_git_branch_checkout` | `Ctrl-G`, `Alt-G` | Interactive git branch checkout (local + remote) |
+| `fzgd` | `fzf_git_diff` | - | Interactive git diff (unstaged changes) |
+| `fzgdc` | `fzf_git_diff_cached` | - | Interactive git diff (staged changes) |
+| `fzgl` | `fzf_git_log` | - | Interactive git log browser |
+| `fzgbd` | `fzf_git_branch_delete` | - | Interactive git branch delete with -y option |
+| `fzgr` | `fzf_git_reset_staged` | - | Interactive git reset (unstage files) |
+| `fzh` | `fzf_history` | `Ctrl-R` (native) | Interactive command history search |
+| `fzp` | `fzf_project` | `Ctrl-P`, `Alt-P` | Quick project directory switcher |
+| `fzd` | `fzf_docker` | - | Interactive docker container shell |
+| `fzrg` | `fzf_rg` | - | Search file contents and edit |
 
 ---
 
@@ -222,13 +228,13 @@ Additional FZF-powered functions available as commands (not aliases).
 | Function | Description | Usage |
 |----------|-------------|-------|
 | `vs` | Open file in VS Code with fuzzy finder | `vs` (no args opens picker) |
-| `gfiles` | List git modified/cached/untracked files with preview | `gfiles` |
-| `gdiff` | Interactive git diff file picker (unstaged) | `gdiff` |
-| `gcdiff` | Interactive git diff file picker (staged) | `gcdiff` |
-| `gadd` | Interactive git add (select files to stage) | `gadd` |
-| `fzf-git-del` | Interactive git branch delete with confirmation | `fzf-git-del` |
-| `fzf-env` | Browse environment variables | `fzf-env` |
-| `fzf-alias` | Browse all aliases interactively | `fzf-alias` |
+| `fzf_git_files` | List git modified/cached/untracked files with preview | `fzf_git_files` |
+| `fzf_git_diff` | Interactive git diff file picker (unstaged) | `fzgd` or `fzf_git_diff` |
+| `fzf_git_diff_cached` | Interactive git diff file picker (staged) | `fzgdc` or `fzf_git_diff_cached` |
+| `fzf_git_add` | Interactive git add (select files to stage) | `fzga` or `fzf_git_add` |
+| `fzf_git_branch_delete` | Interactive git branch delete with -y option | `fzgbd` or `fzf_git_branch_delete [-y]` |
+| `fzf_alias` | Browse and search shell aliases | `fzf-alias` |
+| `fzf_env` | Browse and search environment variables | `fzf-env` |
 
 ---
 

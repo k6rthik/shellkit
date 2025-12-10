@@ -218,8 +218,13 @@ Configures fuzzy finding with fzf for interactive workflows:
 - `Ctrl-T`: Fuzzy file finder
 - `Ctrl-R`: Command history search
 - `Alt-C`: Fuzzy directory navigation
+- `Ctrl-G` / `Alt-G`: Git branch checkout
 
-**FZF Aliases:** All FZF-powered aliases use the `fz` prefix (e.g., `fzf`, `fzcd`, `fzb`, `fzp`).
+**FZF Features:**
+- `fzgr`: Interactive unstage of staged files with preview
+- `fzgbd -y`: Pass `-y` to skip confirmations and delete selected local branches
+
+**FZF Aliases:** All FZF-powered aliases use the `fz` prefix (e.g., `fzff`, `fzcd`, `fzgbc`, `fzp`).
 
 > 📖 **See [Aliases Reference](docs/ALIASES.md#fzf-powered-aliases) for complete FZF alias documentation.**
 - `Ctrl-G`: Git branch selector
@@ -302,18 +307,19 @@ note            # Display all notes
 
 ```bash
 # Interactive file search and edit
-f               # or fzf-file
+fzff            # Quick file search and edit (alias for fzf_file)
 
 # Interactive directory navigation
-fcd             # or fzf-cd
+fzcd            # Interactive cd with preview (alias for fzf_cd)
 
 # Search file contents and open in editor
-frg "search term"  # or fzf-rg (requires ripgrep)
+fzrg "search term"  # Search contents and edit (alias for fzf_rg, requires ripgrep)
 
 # Git operations
-fgb             # Interactive git branch checkout
-fgl             # Interactive git log browser
-checkout        # Fuzzy git branch switcher
+fzgbc           # Interactive git branch checkout (local + remote)
+fzgl            # Interactive git log browser
+fzgbd           # Interactive git branch delete (use -y to skip confirmation)
+fzgr            # Interactive unstage (select staged files to reset)
 
 # System management
 fkill           # Interactive process killer
@@ -342,28 +348,29 @@ Ctrl-K          # Process killer
 
 ```bash
 # Interactive file selection and staging
-gfiles          # List all modified/staged/untracked files
+fzf_git_files   # List all modified/staged/untracked files
                 # Press TAB to select multiple, Enter to return selection
 
 # Stage specific files interactively
-gadd            # Pick which modified files to stage
+fzga            # Pick which modified files to stage
                 # Multi-select with TAB, see diff preview
 
 # Review what you're about to commit
-gcdiff          # Browse staged files with diff preview
+fzgdc           # Browse staged files with diff preview
                 # Navigate with arrow keys, quit with ESC
 
 # Review unstaged changes
-gdiff           # Browse modified files with diff preview
+fzgd            # Browse modified files with diff preview
 
 # Quick workflow example:
-gadd            # Pick files to stage
-gcdiff          # Review staged changes
+fzga            # Pick files to stage
+fzgdc           # Review staged changes
 gc -m "feat: add feature"  # Commit
-checkout        # Switch to another branch
+fzgbc           # Switch to another branch
 
 # Reset staged files
 greset          # Unstage all files and show status
+fzgr            # Interactive unstage with file selection
 ```
 
 ### VS Code Integration
@@ -459,7 +466,7 @@ showpath                    # Shows PATH entries numbered
 
 ```bash
 # Start a new feature
-checkout                    # Switch to develop branch
+fzgbc                       # Switch to develop branch
 git pull
 git checkout -b feature/new-feature
 mkcd src/components/NewFeature
@@ -475,13 +482,13 @@ dlogs container-name       # Follow logs
 
 # Quick git workflow
 gs                          # Check status
-gadd                        # Stage files interactively
+fzga                        # Stage files interactively
 gc -m "feat: implement feature"
 gp                          # Push
 
 # Review changes before committing
-gdiff                       # Browse unstaged changes
-gcdiff                      # Browse staged changes
+fzgd                        # Browse unstaged changes
+fzgdc                       # Browse staged changes
 greset                      # Unstage if needed
 ```
 
@@ -537,11 +544,11 @@ fkill                       # Kill stuck processes if needed
 ### Scenario 3: Code Review Workflow
 
 ```bash
-checkout                    # Switch to feature branch
-gfiles                      # See all changes
-gdiff                       # Review unstaged changes
-gcdiff                      # Review staged changes
-fgl                         # Browse commit history
+fzgbc                       # Switch to feature branch
+fzf_git_files               # See all changes
+fzgd                        # Review unstaged changes
+fzgdc                       # Review staged changes
+fzgl                        # Browse commit history
 vs                          # Open file in VS Code
 ```
 
@@ -560,7 +567,7 @@ npm run dev
 
 # Terminal 3: Testing
 fh                          # Search for previous test commands
-gadd                        # Stage test files
+fzga                        # Stage test files
 gc -m "test: add integration tests"
 ```
 
@@ -720,7 +727,7 @@ MIT License - See [LICENSE](LICENSE) file for details.
 - Set `SHELLKIT_VERBOSE=1` in your shell config for debugging
 - Use tab completion - most functions support it!
 - Browse all aliases with `fzf-alias` or check the [Aliases Reference](docs/ALIASES.md)
-- All FZF aliases now use the `fz` prefix for consistency (e.g., `fzf`, `fzcd`, `fzb`)
+- All FZF aliases use the `fz` prefix for consistency (e.g., `fzff`, `fzcd`, `fzgbc`, `fzp`)
 
 ## Recommended Tools
 

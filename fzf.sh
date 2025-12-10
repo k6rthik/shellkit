@@ -114,29 +114,15 @@ fi
 
 # Custom key bindings for fzf functions
 
-# FZF-powered aliases (all prefixed with 'fz' for consistency)
-alias fzco='git switch $(git branch | sed '\''s/^..//'\'' | fzf)'  # Git checkout branch
-# Note: 'fzf' command is not aliased to avoid shadowing the actual fzf binary
-# Use 'fzff' alias instead for the file finder function
-alias fzff='fzf-file'         # Quick file search and edit
-alias fzcd='fzf-cd'           # Quick cd with preview
-alias fzk='fzf-kill'          # Interactive process killer
-alias fzb='fzf-git-branch'    # Interactive git branch checkout
-alias fzl='fzf-git-log'       # Interactive git log
-alias fzh='fzf-history'       # Interactive history search
-alias fzp='fzf-project'       # Quick project switcher
-alias fzd='fzf-docker'        # Interactive docker container shell
-alias fzrg='fzf-rg'           # Search in files and edit
-
 # Key bindings (only in interactive shells)
 if [[ $- == *i* ]]; then
 
 # ALT-F to open file finder (fzf alias)
 if [ -n "$BASH_VERSION" ]; then
-    bind -x '"\ef": fzf-file'
+    bind -x '"\ef": fzf_file'
 elif [ -n "$ZSH_VERSION" ]; then
     _fzf_file_widget() {
-        fzf-file
+        fzf_file
         zle reset-prompt
     }
     zle -N _fzf_file_widget
@@ -145,23 +131,23 @@ fi
 
 # ALT-D to open directory finder and cd (fzcd alias)
 if [ -n "$BASH_VERSION" ]; then
-    bind -x '"\ed": fzf-cd'
+    bind -x '"\ed": fzf_cd'
 elif [ -n "$ZSH_VERSION" ]; then
     _fzf_cd_widget() {
-        fzf-cd
+        fzf_cd
         zle reset-prompt
     }
     zle -N _fzf_cd_widget
     bindkey '\ed' _fzf_cd_widget
 fi
 
-# CTRL-G to open git branch selector (or ALT-G) - fzb alias
+# CTRL-G to open git branch selector (or ALT-G) - fzgbc alias
 if [ -n "$BASH_VERSION" ]; then
-    bind -x '"\C-g": fzf-git-branch'
-    bind -x '"\eg": fzf-git-branch'
+    bind -x '"\C-g": fzf_git_branch_checkout'
+    bind -x '"\eg": fzf_git_branch_checkout'
 elif [ -n "$ZSH_VERSION" ]; then
     _fzf_git_branch_widget() {
-        fzf-git-branch
+        fzf_git_branch_checkout
         zle reset-prompt
     }
     zle -N _fzf_git_branch_widget
@@ -171,11 +157,11 @@ fi
 
 # CTRL-P to open project selector (or ALT-P) - fzp alias
 if [ -n "$BASH_VERSION" ]; then
-    bind -x '"\C-p": fzf-project'
-    bind -x '"\ep": fzf-project'
+    bind -x '"\C-p": fzf_project'
+    bind -x '"\ep": fzf_project'
 elif [ -n "$ZSH_VERSION" ]; then
     _fzf_project_widget() {
-        fzf-project
+        fzf_project
         zle reset-prompt
     }
     zle -N _fzf_project_widget
@@ -185,10 +171,10 @@ fi
 
 # ALT-K to open process killer (fzk alias)
 if [ -n "$BASH_VERSION" ]; then
-    bind -x '"\ek": fzf-kill'
+    bind -x '"\ek": fzf_kill'
 elif [ -n "$ZSH_VERSION" ]; then
     _fzf_kill_widget() {
-        fzf-kill
+        fzf_kill
         zle reset-prompt
     }
     zle -N _fzf_kill_widget
@@ -239,7 +225,7 @@ vs() {
 }
 
 # Git files picker (modified, cached, untracked)
-gfiles() {
+fzf_git_files() {
     {
         git ls-files -m
         git diff --cached --name-only
@@ -248,38 +234,75 @@ gfiles() {
 }
 
 # Git diff file picker (unstaged changes)
-gdiff() {
+fzf_git_diff() {
     git diff --name-only | fzf --multi --preview 'git diff --color=always -- {}'
 }
 
 # Git cached diff file picker (staged changes)
-gcdiff() {
+fzf_git_diff_cached() {
     git diff --name-only --cached | fzf --multi --preview 'git diff --cached --color=always -- {}'
 }
 
 # Interactive git add (pick modified files to stage)
-gadd() {
+fzf_git_add() {
     local files
     files=$(git ls-files -m | fzf --multi --preview 'git diff --color=always -- {}')
     [ -n "$files" ] && echo "$files" | xargs git add
 }
 
+# Interactive git reset (unstage) for multiple files with preview
+fzf_git_reset_staged() {
+    if ! command -v git &> /dev/null; then
+        echo "git is required for greset"
+        return 1
+    fi
+
+    # List staged files (i.e., in index)
+    local files selected
+    files=$(git diff --name-only --cached)
+    if [ -z "$files" ]; then
+        echo "No staged files to reset."
+        return 1
+    fi
+
+    selected=$(echo "$files" | fzf --multi --ansi --preview 'git --no-pager diff --cached --color=always -- {1}' --preview-window=right:60%:wrap --header='[unstage:select files to reset]')
+    if [ -z "$selected" ]; then
+        return 1
+    fi
+
+    # Run git reset HEAD -- <file> for each selected file
+    echo "$selected" | while IFS= read -r file; do
+        [ -z "$file" ] && continue
+        git reset HEAD -- "$file" && echo "Unstaged: $file"
+    done
+}
+
 # Additional FZF-enhanced functions
 
 # Interactive file finder with preview
-fzf-file() {
+fzf_file() {
     local file
     file=$(fd --type f --hidden --exclude .git 2>/dev/null | fzf --preview 'bat --color=always --style=numbers --line-range=:500 {} 2>/dev/null || cat {}') && ${EDITOR:-vim} "$file"
 }
 
 # Interactive directory finder and cd
-fzf-cd() {
+fzf_cd() {
     local dir
-    dir=$(fd --type d --hidden --exclude .git 2>/dev/null | fzf --preview 'ls -la {}') && cd "$dir" || return 1
+    # Common directories to exclude from results
+    local -a _excludes
+    _excludes=(--exclude .git --exclude node_modules --exclude deps --exclude vendor)
+
+    if command -v fd &> /dev/null; then
+        dir=$(fd --type d --hidden "${_excludes[@]}" . 2>/dev/null | fzf --preview 'ls -la {}')
+    else
+        dir=$(find . \( -path '*/.git' -o -path '*/node_modules' -o -path '*/deps' -o -path '*/vendor' \) -prune -o -type d -print 2>/dev/null | sed 's|^\./||' | fzf --preview 'ls -la {}')
+    fi
+
+    [ -n "$dir" ] && cd "$dir" || return 1
 }
 
 # Interactive process killer
-fzf-kill() {
+fzf_kill() {
     local pid
     pid=$(ps -ef | sed 1d | fzf -m --header='[kill:process]' | awk '{print $2}')
     if [ -n "$pid" ]; then
@@ -288,7 +311,7 @@ fzf-kill() {
 }
 
 # Interactive git branch checkout
-fzf-git-branch() {
+fzf_git_branch_checkout() {
     local branch
     branch=$(git branch --all | grep -v HEAD | sed 's/^..//' | sed 's/remotes\/origin\///' | sort -u | fzf --header='[checkout:branch]')
     if [ -n "$branch" ]; then
@@ -297,7 +320,7 @@ fzf-git-branch() {
 }
 
 # Interactive git log browser
-fzf-git-log() {
+fzf_git_log() {
     git log --graph --color=always --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" |
     fzf --ansi --no-sort --reverse --tiebreak=index \
         --preview 'echo {} | grep -o "[a-f0-9]\{7\}" | head -1 | xargs git show --color=always' \
@@ -305,8 +328,29 @@ fzf-git-log() {
 }
 
 # Interactive git branch delete (local only)
-_fzf-git-del() {
-    local branches branch confirm
+fzf_git_branch_delete() {
+    local branches branch confirm skip_confirm=0
+    # Parse options: support -y or --yes to skip confirmations
+    while [ "$#" -gt 0 ]; do
+        case "$1" in
+            -y|--yes)
+                skip_confirm=1
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            -*)
+                # unknown option, pass through
+                break
+                ;;
+            *)
+                break
+                ;;
+        esac
+    done
+
     branches=$(git branch | grep -v HEAD | sed 's/^..//' | sort -u | fzf --multi --header='[delete:local branch]')
     if [ -z "$branches" ]; then
         return 1
@@ -318,19 +362,23 @@ _fzf-git-del() {
         echo "Review branch: $branch"
         git log -1 --pretty=format:"%C(auto)%h %C(bold blue)%an %C(reset)%ar %C(bold yellow)%s" "$branch"
         echo
-        # Cross-shell compatible prompt - using printf and read from stdin
-        printf "Delete local branch '%s'? [y/N]: " "$branch"
-        read confirm </dev/tty
-        if [[ "$confirm" =~ ^[Yy]$ ]]; then
+        if [ "$skip_confirm" -eq 1 ]; then
             git branch -D "$branch"
         else
-            echo "Aborted deletion of '$branch'."
+            # Cross-shell compatible prompt - using printf and read from stdin
+            printf "Delete local branch '%s'? [y/N]: " "$branch"
+            read confirm </dev/tty
+            if [[ "$confirm" =~ ^[Yy]$ ]]; then
+                git branch -D "$branch"
+            else
+                echo "Aborted deletion of '$branch'."
+            fi
         fi
     done <<< "$branches"
 }
-alias fzf-git-del='_fzf-git-del'
+
 # Interactive command history search
-fzf-history() {
+fzf_history() {
     local cmd
     cmd=$(history | fzf --tac --no-sort | sed 's/^ *[0-9]* *//')
     if [ -n "$cmd" ]; then
@@ -340,18 +388,18 @@ fzf-history() {
 }
 
 # Interactive environment variable viewer
-fzf-env() {
+fzf_env() {
     env | sort | fzf --preview 'echo {}' --preview-window=wrap
 }
 
 # Interactive alias viewer
-fzf-alias() {
+fzf_alias() {
     alias | fzf --preview 'echo {}' --preview-window=wrap
 }
 
 # Find and cd to a project directory
 # Supports multiple directories in PROJECTS_DIR separated by colons (like PATH)
-fzf-project() {
+fzf_project() {
     local projects_dir="${PROJECTS_DIR:-$HOME/projects}"
     local dir
     local all_projects=""
@@ -385,7 +433,7 @@ fzf-project() {
 }
 
 # Interactive docker container selection
-fzf-docker() {
+fzf_docker() {
     local container
     container=$(docker ps -a --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Image}}" | fzf --header-lines=1 | awk '{print $1}')
     if [ -n "$container" ]; then
@@ -394,7 +442,7 @@ fzf-docker() {
 }
 
 # Search file contents and open in editor
-fzf-rg() {
+fzf_rg() {
     if command -v rg &> /dev/null; then
         local file line
         read -r file line < <(
@@ -412,3 +460,26 @@ fzf-rg() {
         return 1
     fi
 }
+
+# ============================================================================
+# Aliases - All FZF-powered aliases
+# ============================================================================
+
+# FZF-powered aliases (all prefixed with 'fz' for consistency)
+alias fzco='git switch $(git branch | sed '\''s/^..//'\'\'' | fzf)'  # Git checkout branch
+alias fzcd='fzf_cd'           # Quick cd with preview
+alias fzd='fzf_docker'        # Interactive docker container shell
+alias fzf-alias='fzf_alias'   # Browse and search shell aliases
+alias fzf-env='fzf_env'       # Browse and search environment variables
+alias fzff='fzf_file'         # Quick file search and edit
+alias fzga='fzf_git_add'          # Interactive git add (stage files)
+alias fzgbc='fzf_git_branch_checkout'            # Interactive git branch checkout
+alias fzgbd='fzf_git_branch_delete'              # Interactive git branch delete
+alias fzgd='fzf_git_diff'     # Interactive git diff (unstaged)
+alias fzgdc='fzf_git_diff_cached'                # Interactive git diff (staged)
+alias fzgl='fzf_git_log'      # Interactive git log browser
+alias fzgr='fzf_git_reset_staged'                # Interactive git reset (unstage files)
+alias fzh='fzf_history'       # Interactive history search
+alias fzk='fzf_kill'          # Interactive process killer
+alias fzp='fzf_project'       # Quick project switcher
+alias fzrg='fzf_rg'           # Search in files and edit
