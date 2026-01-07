@@ -34,6 +34,9 @@ _shellkit_source "${SHELLKIT_DIR}/env.sh"
 # 2. PATH modifications
 _shellkit_source "${SHELLKIT_DIR}/paths.sh"
 
+# 3. Tool initializations (asdf, gh, zoxide, etc.)
+_shellkit_source "${SHELLKIT_DIR}/tools_init.sh"
+
 # 3. Custom functions
 _shellkit_source "${SHELLKIT_DIR}/functions.sh"
 
@@ -45,9 +48,6 @@ _shellkit_source "${SHELLKIT_DIR}/fzf.sh"
 
 # 6. WSL-specific initialization (if on WSL)
 _shellkit_source "${SHELLKIT_DIR}/wsl.sh"
-
-# 7. Starship prompt configuration (loaded near the end)
-_shellkit_source "${SHELLKIT_DIR}/starship.sh"
 
 # Load local overrides if they exist (not tracked in git)
 _shellkit_source "${SHELLKIT_DIR}/local.sh"

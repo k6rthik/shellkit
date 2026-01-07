@@ -45,6 +45,7 @@ export NOTES_FILE="$HOME/notes.txt"
 
 # Erlang configuration
 export KERL_BUILD_DOCS="yes"
+export KERL_CONFIGURE_OPTIONS="--disable-debug --without-javac"
 export ERL_AFLAGS="-kernel shell_history enabled"
 
 # SSL Certificate configuration (if certificate file exists)
@@ -74,6 +75,9 @@ fi
 # Add your custom environment variables below this line
 # ============================================
 
+# Suppress zoxide doctor warning if zoxide is installed
+export _ZO_DOCTOR=0
+
 # Example: API keys and secrets (DO NOT commit actual secrets!)
 # export GITHUB_TOKEN="your-token-here"
 # export AWS_PROFILE="your-profile"
@@ -86,29 +90,4 @@ fi
 if [ -f "${SHELLKIT_DIR}/.env.local" ]; then
     # shellcheck disable=SC1091
     source "${SHELLKIT_DIR}/.env.local"
-fi
-
-
-# Detect shell type for completions and integrations
-if [ -n "$ZSH_VERSION" ]; then
-    _SHELL_TYPE="zsh"
-elif [ -n "$BASH_VERSION" ]; then
-    _SHELL_TYPE="bash"
-else
-    _SHELL_TYPE=""
-fi
-
-# asdf completion (if asdf is installed)
-if command -v asdf &> /dev/null && [ -n "$_SHELL_TYPE" ]; then
-    . <(asdf completion "$_SHELL_TYPE")
-fi
-
-# GitHub Copilot CLI aliases (if gh copilot is available)
-if command -v gh &> /dev/null && gh copilot --version &> /dev/null && [ -n "$_SHELL_TYPE" ]; then
-    eval "$(gh copilot alias -- $_SHELL_TYPE)"
-fi
-
-# Zoxide initialization (if zoxide is installed)
-if command -v zoxide &> /dev/null && [ -n "$_SHELL_TYPE" ]; then
-    eval "$(zoxide init $_SHELL_TYPE)"
 fi

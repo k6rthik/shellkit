@@ -64,11 +64,6 @@ if [ -d "/opt/homebrew/bin" ]; then
     _add_to_path "/opt/homebrew/sbin"
 fi
 
-# Linuxbrew
-if [ -d "/home/linuxbrew/.linuxbrew/bin" ]; then
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-fi
-
 # Snap
 _add_to_path "/snap/bin"
 
