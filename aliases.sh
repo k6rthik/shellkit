@@ -9,6 +9,9 @@ alias ....='cd ../../..'
 alias ~='cd ~'
 alias -- -='cd -'
 
+# Extended pwd - prints full path of file/directory argument
+alias pwd='fullpath'
+
 # Workspace navigation (with validation)
 if [ -d "$HOME/ws" ]; then
     alias ws='cd ~/ws'

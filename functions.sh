@@ -11,6 +11,37 @@ _mkcd() {
     mkdir -p "$1" && cd "$1" || return 1
 }
 
+# Print full/absolute path - extends pwd to work with file/directory arguments
+# Usage: fullpath [file|directory]
+#   No args: prints current working directory (same as pwd)
+#   With arg: prints absolute path of the given file or directory
+fullpath() {
+    if [ -z "$1" ]; then
+        # No argument - behave like pwd
+        pwd
+    else
+        # Argument provided - get absolute path
+        local target="$1"
+        
+        if [ ! -e "$target" ]; then
+            echo "Error: '$target' does not exist" >&2
+            return 1
+        fi
+        
+        if [ -d "$target" ]; then
+            # It's a directory - cd into it and get pwd
+            (cd "$target" && pwd)
+        else
+            # It's a file - get directory path and append filename
+            local dir
+            local base
+            dir=$(dirname "$target")
+            base=$(basename "$target")
+            echo "$(cd "$dir" && pwd)/$base"
+        fi
+    fi
+}
+
 # Compress files/directories into various archive formats
 compress() {
     if [ -z "$1" ] || [ -z "$2" ]; then

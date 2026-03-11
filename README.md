@@ -21,6 +21,7 @@ A portable, modular shell configuration framework for bash and zsh that works se
 - [Customization](#customization)
 - [Syncing Across Machines](#syncing-across-machines)
 - [Troubleshooting](#troubleshooting)
+- [Tool Management](#tool-management)
 - [Recommended Tools](#recommended-tools)
 - [Docker Testing](#docker-testing)
 - [Contributing](#contributing)
@@ -54,6 +55,8 @@ shellkit/
 ├── wsl.sh           # WSL-specific initialization
 ├── starship.sh      # Starship prompt configuration
 ├── install.sh       # Installation script
+├── check_tools.sh   # Check which tools are installed/missing
+├── install_tools.sh # Install core enhanced tools
 ├── .env.example     # Template for .env.local
 ├── .gitignore       # Git ignore rules
 ├── README.md        # This file
@@ -729,19 +732,120 @@ MIT License - See [LICENSE](LICENSE) file for details.
 - Browse all aliases with `fzf-alias` or check the [Aliases Reference](docs/ALIASES.md)
 - All FZF aliases use the `fz` prefix for consistency (e.g., `fzff`, `fzcd`, `fzgbc`, `fzp`)
 
+## Tool Management
+
+Shellkit includes scripts to help you check and install the enhanced CLI tools it uses.
+
+### check_tools.sh - Check Tool Availability
+
+Run this script to see which tools are installed and which are missing:
+
+```bash
+./check_tools.sh
+```
+
+This displays a categorized list of tools with their installation status:
+- **Core Enhanced Tools**: fzf, fd, rg, bat, eza, zoxide, starship
+- **Development Tools**: git, docker, gh, tmux, code
+- **Version/Package Managers**: asdf, brew, npm, pip, cargo, etc.
+- **Utilities**: qrencode, 7z, curl, wget, jq, htop, tree
+- **Editors**: vim, nvim, nano
+- **WSL-specific**: wslview, wslpath (only shown when running in WSL)
+
+### install_tools.sh - Install Core Tools
+
+Install the core enhanced tools that shellkit uses for the best experience:
+
+```bash
+./install_tools.sh
+```
+
+**Features:**
+- **Three installation modes:**
+  - `--apt`: System-wide using apt-get (requires sudo, Debian/Ubuntu)
+  - `--brew`: System-wide using Homebrew (prompts to install brew if missing)
+  - `--user`: Install to `~/.shellkit/bin` without sudo (uses GitHub releases)
+- **Dry-run mode**: Preview what would be installed without making changes
+- **Selective installation**: Install all tools or pick specific ones
+
+**Core tools installed:**
+| Tool | Description |
+|------|-------------|
+| fzf | Fuzzy finder for interactive selection |
+| fd | Fast file finder (alternative to find) |
+| rg | Ripgrep - fast grep replacement |
+| bat | Cat replacement with syntax highlighting |
+| eza | Modern ls replacement with icons |
+| zoxide | Smarter cd command with frecency |
+| starship | Cross-shell customizable prompt |
+
+**Extra tools available:**
+| Tool | Description |
+|------|-------------|
+| qrencode | QR code generator for terminal |
+| 7z | 7-Zip archive utility |
+| wslview | Open files in Windows (WSL only) |
+
+**Usage examples:**
+
+```bash
+# Interactive mode - prompts for options
+./install_tools.sh
+
+# Install all core tools via apt-get
+./install_tools.sh --apt --all
+
+# Install all tools via Homebrew
+./install_tools.sh --brew --all
+
+# Install to ~/.shellkit/bin (no sudo required)
+./install_tools.sh --user --all
+
+# Install specific tools
+./install_tools.sh --apt --tools fzf,rg,bat
+./install_tools.sh --brew --tools starship,eza
+
+# Dry-run: see what would be installed
+./install_tools.sh --dry-run --apt --all
+./install_tools.sh -n --brew --tools fzf,fd
+```
+
+**Command-line options:**
+| Option | Description |
+|--------|-------------|
+| `-n, --dry-run` | Show what would be done without executing |
+| `--apt` | Install system-wide using apt-get (requires sudo) |
+| `--brew` | Install system-wide using Homebrew |
+| `-u, --user` | Install to ~/.shellkit/bin without sudo |
+| `-a, --all` | Install all core tools |
+| `-t, --tools LIST` | Install specific tools (comma-separated) |
+| `-h, --help` | Show help message |
+
 ## Recommended Tools
 
-For the best experience, install these modern CLI tools:
+For the best shellkit experience, install these modern CLI tools using the built-in installer:
+
+```bash
+# Check what's missing
+./check_tools.sh
+
+# Install all core tools (choose your preferred method)
+./install_tools.sh --apt --all    # Using apt-get
+./install_tools.sh --brew --all   # Using Homebrew
+./install_tools.sh --user --all   # No sudo required
+```
+
+**Manual installation (if preferred):**
 
 ```bash
 # On Ubuntu/Debian
-sudo apt install fd-find ripgrep fzf bat exa
+sudo apt install fzf fd-find ripgrep bat
 
 # On macOS
-brew install fd ripgrep fzf bat eza
+brew install fd ripgrep fzf bat eza zoxide starship
 
-# On Arch Linux
-sudo pacman -S fd ripgrep fzf bat exa
+# Install starship prompt
+curl -sS https://starship.rs/install.sh | sh
 ```
 
 **What they do:**
@@ -749,7 +853,9 @@ sudo pacman -S fd ripgrep fzf bat exa
 - `ripgrep` (rg): Fast alternative to `grep`
 - `fzf`: Fuzzy finder for interactive selection
 - `bat`: Cat with syntax highlighting
-- `eza`: Modern ls replacement
+- `eza`: Modern ls replacement with icons and git integration
+- `zoxide`: Smarter cd that learns your habits
+- `starship`: Beautiful, fast, customizable prompt
 
 All features gracefully fall back to standard tools if these aren't installed.
 
