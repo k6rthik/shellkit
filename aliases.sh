@@ -84,6 +84,19 @@ alias localip="ip addr show | grep 'inet ' | grep -v 127.0.0.1 | awk '{print \$2
 alias mkdir='mkdir -pv'
 alias wget='wget -c'
 
+# Touch with auto-create parent directories
+# Usage: touch path/to/new/file.txt (creates path/to/new/ if needed)
+touch() {
+    for filepath in "$@"; do
+        local dir
+        dir=$(dirname "$filepath")
+        if [ "$dir" != "." ] && [ ! -d "$dir" ]; then
+            mkdir -p "$dir"
+        fi
+        command touch "$filepath"
+    done
+}
+
 # SSH tunneling
 alias lhr='ssh -o ServerAliveInterval=60 -R 80:localhost:4005 localhost.run'
 
@@ -124,6 +137,11 @@ elif command -v yum &> /dev/null; then
 elif command -v brew &> /dev/null; then
     alias update='brew update && brew upgrade'
     alias install='brew install'
+fi
+
+# QR code generation
+if command -v qrencode &> /dev/null; then
+    alias qr='qrencode -t ANSIUTF8'
 fi
 
 # Add your custom aliases below this line
