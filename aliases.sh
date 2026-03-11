@@ -8,7 +8,6 @@ alias ...='cd ../..'
 alias ....='cd ../../..'
 alias ~='cd ~'
 alias -- -='cd -'
-alias pg='cd'
 
 # Workspace navigation (with validation)
 if [ -d "$HOME/ws" ]; then
@@ -27,7 +26,6 @@ else
     alias ls='ls --color=auto'
     alias ll='ls -alF'
     alias la='ls -A'
-    alias l='ls -CF'
 fi
 
 # Safety nets - prompt before overwriting files

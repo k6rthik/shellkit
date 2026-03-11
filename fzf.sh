@@ -4,6 +4,7 @@
 
 # Check if fzf is installed
 if ! command -v fzf &> /dev/null; then
+    echo "fzf not found, skipping fzf configuration."
     return 0
 fi
 
@@ -317,7 +318,7 @@ fzf_kill() {
 # Interactive git branch checkout
 fzf_git_branch_checkout() {
     local branch
-    branch=$(git branch --all | grep -v HEAD | sed 's/^..//' | sed 's/remotes\/origin\///' | sort -u | fzf --header='[checkout:branch]')
+    branch=$(git branch | grep -v HEAD | sed 's/^..//' | sed 's/remotes\/origin\///' | sort -u | fzf --header='[git checkout:branch]')
     if [ -n "$branch" ]; then
         git checkout "$branch"
     fi
