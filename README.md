@@ -416,12 +416,6 @@ fdir "src"      # Find directories named src
 # Quick workspace access
 ws              # Go to ~/ws or ~/workspace
 
-# Project navigation (if configured)
-elcows          # Navigate to elco workspace
-up              # Go to unified-platform
-gal             # Go to galactus
-bf              # Go to bifrost service
-
 # Custom project shortcuts (add to local.sh)
 alias myapp='cd ~/ws/my-application'
 alias frontend='myapp && cd frontend'
@@ -503,10 +497,6 @@ z project       # Jump to most frequent "project" directory
 z doc           # Jump to documents
 zi              # Interactive directory picker
 
-# Zoxide learns your habits:
-cd ~/ws/elco/unified-platform/galactus/service/bifrost
-# Later, just:
-z bifrost       # Jumps there directly
 ```
 
 ## Real-World Scenarios
