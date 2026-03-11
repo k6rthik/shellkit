@@ -669,7 +669,7 @@ install_selected_tools() {
         if command_exists "$tool"; then
             echo -e "${YELLOW}Skipping $tool (already installed)${NC}"
         else
-            install_"$tool" "$INSTALL_MODE"
+            install_"$tool" "$INSTALL_MODE" || true
         fi
         echo
     done
@@ -689,7 +689,7 @@ install_all() {
         if command_exists "$tool"; then
             echo -e "${YELLOW}Skipping $tool (already installed)${NC}"
         else
-            install_"$tool" "$INSTALL_MODE"
+            install_"$tool" "$INSTALL_MODE" || true
         fi
         echo
     done
@@ -748,7 +748,7 @@ select_tools() {
             if command_exists "$tool"; then
                 echo -e "${YELLOW}Skipping $tool (already installed)${NC}"
             else
-                install_"$tool" "$INSTALL_MODE"
+                install_"$tool" "$INSTALL_MODE" || true
             fi
             echo
         else

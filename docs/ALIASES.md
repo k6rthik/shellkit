@@ -66,19 +66,8 @@ Enhanced file listing and manipulation with safety nets.
 | `mv` | `mv -i` | Move with confirmation prompt |
 | `rm` | `rm -i` | Remove with confirmation prompt |
 | `mkdir` | `mkdir -pv` | Create directories recursively with verbose output |
-| `touch` | `touch` (function) | Create file with auto-creation of parent directories |
 | `cat` | `bat --paging=never` or `cat` | Display file contents (uses bat if available) |
 | `less` | `bat` or `less` | Paginated file viewer (uses bat if available) |
-
-**Example usage of `touch`:**
-```bash
-# Creates parent directories automatically if they don't exist
-$ touch path/to/deeply/nested/file.txt
-# This creates: path/to/deeply/nested/ directory and file.txt
-
-# Works with multiple files
-$ touch a/b/c.txt d/e/f.txt
-```
 
 ---
 
