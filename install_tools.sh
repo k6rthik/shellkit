@@ -511,14 +511,12 @@ install_zoxide() {
         ""
 }
 
-# starship - uses curl installer as fallback
+# starship - brew only (curl installer requires sudo)
 install_starship() {
     install_tool "starship" "$1" \
         "starship" \
         "" "" "" \
-        "curl:https://starship.rs/install.sh" "starship" \
-        "starship-{arch}-unknown-{os}-gnu.tar.gz" \
-        ""
+        "none" "" "" ""
 }
 
 # qrencode - apt/brew only, no GitHub release
