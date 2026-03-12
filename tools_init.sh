@@ -23,9 +23,10 @@ if command -v asdf &> /dev/null && [ -n "$_SHELL_TYPE" ]; then
 fi
 
 # GitHub Copilot CLI aliases (if gh copilot is available)
-if command -v gh &> /dev/null && gh copilot --version &> /dev/null && [ -n "$_SHELL_TYPE" ]; then
-    eval "$(gh copilot alias -- $_SHELL_TYPE)"
+if command -v gh &> /dev/null && gh extension list | grep -q 'copilot'; then
+    alias copilot='gh copilot -i "bash"'
 fi
+
 
 # Zoxide initialization (if zoxide is installed)
 if command -v zoxide &> /dev/null && [ -n "$_SHELL_TYPE" ]; then
