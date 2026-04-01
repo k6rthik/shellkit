@@ -275,3 +275,54 @@ command_exists() {
 
 # Add your custom functions below this line
 # ============================================
+
+# Find and replace text in a file
+# Usage: rep <find> <replace> <filename>
+rep() {
+    if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]; then
+        echo "Usage: rep <find> <replace> <filename>" >&2
+        echo "Example: rep 'old_text' 'new_text' myfile.txt" >&2
+        return 1
+    fi
+    
+    local find="$1"
+    local replace="$2"
+    local file="$3"
+    
+    if [ ! -f "$file" ]; then
+        echo "Error: File '$file' not found" >&2
+        return 1
+    fi
+    
+    # Check if file is writable
+    if [ ! -w "$file" ]; then
+        echo "Error: File '$file' is not writable" >&2
+        return 1
+    fi
+    
+    # Count occurrences before replacement
+    local count_before
+    count_before=$(grep -o -F "$find" "$file" 2>/dev/null | wc -l | tr -d ' ')
+    
+    # Escape forward slashes in patterns for sed
+    local find_escaped="${find//\//\\/}"
+    local replace_escaped="${replace//\//\\/}"
+    
+    # OS-specific sed syntax (macOS requires empty string after -i)
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        sed -i '' "s/$find_escaped/$replace_escaped/g" "$file"
+    else
+        sed -i "s/$find_escaped/$replace_escaped/g" "$file"
+    fi
+    
+    if [ $? -eq 0 ]; then
+        if [ "$count_before" -gt 0 ]; then
+            echo "✓ Replaced $count_before occurrence(s) of '$find' with '$replace' in $file"
+        else
+            echo "⚠ No matches found for '$find' in $file"
+        fi
+    else
+        echo "Error: Replacement failed" >&2
+        return 1
+    fi
+}

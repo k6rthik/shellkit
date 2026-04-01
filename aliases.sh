@@ -121,8 +121,8 @@ alias zshrc='${EDITOR:-vim} ~/.zshrc'
 alias bashrc='${EDITOR:-vim} ~/.bashrc'
 alias vimrc='${EDITOR:-vim} ~/.vimrc'
 
-# Reload shell
-alias reload='source ~/.${SHELLKIT_SHELL}rc'
+# Reload shell and shellkit
+alias reload='source ~/.shellkit/init.sh && echo "✓ Shellkit reloaded"'
 
 # Clear screen
 alias clr='clear'
