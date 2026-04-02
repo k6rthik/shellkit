@@ -121,8 +121,8 @@ alias zshrc='${EDITOR:-vim} ~/.zshrc'
 alias bashrc='${EDITOR:-vim} ~/.bashrc'
 alias vimrc='${EDITOR:-vim} ~/.vimrc'
 
-# Reload shell and shellkit
-alias reload='source ~/.shellkit/init.sh && echo "✓ Shellkit reloaded"'
+# Reload shell (implemented as a function in functions.sh for safety)
+# See reload() for recursion guards and timing output.
 
 # Clear screen
 alias clr='clear'
@@ -147,3 +147,8 @@ fi
 
 # Add your custom aliases below this line
 # ============================================
+
+# Claude CLI with proxy
+if command -v claude &> /dev/null; then
+    alias claude='HTTPS_PROXY=http://127.0.0.1:8118 HTTP_PROXY=http://127.0.0.1:8118 claude'
+fi

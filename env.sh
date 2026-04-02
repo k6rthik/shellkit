@@ -43,6 +43,11 @@ export TIMEFORMAT=$'\nreal %3R\tuser %3U\tsys %3S\tpcpu %P\n'
 # Notes file location (used by the note function)
 export NOTES_FILE="$HOME/notes.txt"
 
+# Proxy configuration (used by the proxy function)
+# SHELLKIT_PROXY_HOSTNAME is used as default host for 'proxy start' if not provided as argument
+# Example: export SHELLKIT_PROXY_HOSTNAME="user@remote-host"
+export SHELLKIT_PROXY_HOSTNAME="${SHELLKIT_PROXY_HOSTNAME:-}"
+
 # Erlang configuration
 export KERL_BUILD_DOCS="yes"
 export KERL_CONFIGURE_OPTIONS="--disable-debug --without-javac"

@@ -23,7 +23,9 @@ if command -v asdf &> /dev/null && [ -n "$_SHELL_TYPE" ]; then
 fi
 
 # GitHub Copilot CLI aliases (if gh copilot is available)
-if command -v gh &> /dev/null && gh extension list | grep -q 'copilot'; then
+# Using `gh copilot --help` avoids the slower `gh extension list` call that can block
+# non-interactive reloads inside VS Code terminals.
+if command -v gh &> /dev/null && gh copilot --help &> /dev/null; then
     alias copilot='gh copilot -i "bash"'
 fi
 

@@ -119,6 +119,10 @@ source ~/.zshrc
 # Or simply open a new terminal
 ```
 
+> 💡 shellkit provides a `reload` function that safely re-sources your
+> shell rc file with recursion guards and optional timing output when
+> `SHELLKIT_VERBOSE=1`.
+
 ## Configuration Files
 
 ### init.sh - Main Entry Point

@@ -26,6 +26,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - File operation helpers
 - Development productivity functions
 
+### Fixed
+- Hardened the `reload` helper to prevent recursive sourcing loops and added
+	optional verbose timing output for easier debugging, preventing VS Code
+	terminals from terminating when `reload` is triggered twice
+
 ## [1.0.0] - 2025-12-02
 
 ### Added

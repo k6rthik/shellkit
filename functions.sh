@@ -273,6 +273,64 @@ command_exists() {
     command -v "$1" &> /dev/null
 }
 
+# Safe shell reload helper (replaces the old alias implementation)
+# - Prevents recursive reloads that can terminate VS Code terminals
+# - Emits optional timing info when SHELLKIT_VERBOSE=1
+# - Works for both bash and zsh by inspecting SHELLKIT_SHELL/BASH_VERSION/ZSH_VERSION
+reload() {
+    local shell_name rcfile depth start_ts end_ts duration status
+
+    shell_name="${SHELLKIT_SHELL:-}"
+    if [ -z "$shell_name" ]; then
+        if [ -n "$BASH_VERSION" ]; then
+            shell_name="bash"
+        elif [ -n "$ZSH_VERSION" ]; then
+            shell_name="zsh"
+        fi
+    fi
+    shell_name="${shell_name:-bash}"
+    rcfile="$HOME/.${shell_name}rc"
+
+    if [ ! -f "$rcfile" ]; then
+        echo "reload: unable to find $rcfile" >&2
+        return 1
+    fi
+
+    depth="${SHELLKIT_RELOAD_DEPTH:-0}"
+    if [ "$depth" -ge 1 ]; then
+        echo "reload: another reload is already running (depth=$depth)" >&2
+        return 1
+    fi
+
+    if command -v date &> /dev/null; then
+        start_ts=$(date +%s%3N 2>/dev/null || date +%s)
+    fi
+
+    export SHELLKIT_RELOAD_DEPTH=$((depth + 1))
+
+    if [ "${SHELLKIT_VERBOSE:-0}" = "1" ]; then
+        echo "↻ Reloading shell configuration from $rcfile"
+    fi
+
+    # shellcheck disable=SC1090
+    source "$rcfile"
+    status=$?
+
+    if [ "$depth" -eq 0 ]; then
+        unset SHELLKIT_RELOAD_DEPTH
+    else
+        export SHELLKIT_RELOAD_DEPTH="$depth"
+    fi
+
+    if [ "${SHELLKIT_VERBOSE:-0}" = "1" ] && [ -n "$start_ts" ]; then
+        end_ts=$(date +%s%3N 2>/dev/null || date +%s)
+        duration=$((end_ts - start_ts))
+        echo "✓ Reload finished in ${duration}ms (status: $status)"
+    fi
+
+    return "$status"
+}
+
 # Add your custom functions below this line
 # ============================================
 
@@ -325,4 +383,80 @@ rep() {
         echo "Error: Replacement failed" >&2
         return 1
     fi
+}
+
+# Manage SOCKS proxy via SSH
+# Usage: proxy [start <host>|status|stop]
+# - proxy start <host>   : Start SOCKS proxy on localhost:1080
+# - proxy status         : Check if proxy is running
+# - proxy stop           : Stop the proxy
+proxy() {
+    if [ -z "$1" ]; then
+        echo "Usage: proxy [start <host>|status|stop]"
+        echo "  proxy start <host>  - Start proxy to <host> on localhost:1080"
+        echo "  proxy status        - Check if proxy is running"
+        echo "  proxy stop          - Stop the proxy"
+        return 1
+    fi
+
+    local cmd="$1"
+
+    case "$cmd" in
+        start)
+            local host="$2"
+            # Use SHELLKIT_PROXY_HOSTNAME if host not provided as argument
+            if [ -z "$host" ]; then
+                host="${SHELLKIT_PROXY_HOSTNAME}"
+            fi
+            if [ -z "$host" ]; then
+                echo "Usage: proxy start <host|alias>"
+                echo "  Or set SHELLKIT_PROXY_HOSTNAME environment variable"
+                return 1
+            fi
+            echo "Starting SOCKS proxy to $host on localhost:1080..."
+            ssh -D 1080 -f -C -q -N "$host"
+
+            if [ $? -eq 0 ]; then
+                echo "✓ Proxy started. Use localhost:1080 as SOCKS5 proxy."
+            else
+                echo "Error: Failed to start proxy" >&2
+                return 1
+            fi
+            ;;
+
+        status)
+            local proxy_pid
+            proxy_pid=$(pgrep -f 'ssh -D 1080' | head -1)
+
+            if [ -n "$proxy_pid" ]; then
+                echo "✓ Proxy is running (PID: $proxy_pid)"
+                # Try to show the remote host
+                local remote_host
+                remote_host=$(ps -p "$proxy_pid" -o args= 2>/dev/null | rg -o '[a-zA-Z0-9._@-]+$' | head -1)
+                if [ -n "$remote_host" ]; then
+                    echo "  Connected to: $remote_host"
+                fi
+                return 0
+            else
+                echo "✗ Proxy is not running"
+                return 1
+            fi
+            ;;
+
+        stop)
+            if pgrep -f 'ssh -D 1080' > /dev/null; then
+                pkill -f 'ssh -D 1080'
+                echo "✓ Proxy stopped"
+            else
+                echo "Proxy is not running"
+                return 1
+            fi
+            ;;
+
+        *)
+            echo "Unknown command: $cmd" >&2
+            echo "Usage: proxy [start <host>|status|stop]"
+            return 1
+            ;;
+    esac
 }

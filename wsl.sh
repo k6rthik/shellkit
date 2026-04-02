@@ -3,7 +3,7 @@
 # This file contains WSL startup tasks that should run once per boot
 
 # Only run on WSL
-if ! grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null; then
+if ! rg -qi "(Microsoft|WSL)" /proc/version &> /dev/null; then
     return 0
 fi
 

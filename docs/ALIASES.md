@@ -178,7 +178,7 @@ Quick access to shell configuration files.
 | `zshrc` | `${EDITOR:-vim} ~/.zshrc` | Edit zsh configuration |
 | `bashrc` | `${EDITOR:-vim} ~/.bashrc` | Edit bash configuration |
 | `vimrc` | `${EDITOR:-vim} ~/.vimrc` | Edit vim configuration |
-| `reload` | `source ~/.${SHELLKIT_SHELL}rc` | Reload shell configuration |
+| `reload` | `reload()` | Reload shell configuration (function with recursion guard) |
 | `c` | `clear` | Clear terminal screen |
 | `cl` | `clear && ls` | Clear screen and list files |
 | `mkcd` | `_mkcd` | Create directory and cd into it (function) |
