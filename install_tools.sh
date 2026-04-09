@@ -70,7 +70,7 @@ while [[ $# -gt 0 ]]; do
             echo "  -a, --all          Install all core tools"
             echo "  -t, --tools LIST   Install specific tools (comma-separated)"
             echo "                     Core: fzf,fd,rg,bat,eza,zoxide,starship"
-            echo "                     Extra: qrencode,7z,wslview"
+            echo "                     Extra: qrencode,7z,privoxy,wslview"
             echo "  -h, --help         Show this help message"
             echo ""
             echo "Examples:"
@@ -542,10 +542,18 @@ install_wslview() {
         echo -e "${YELLOW}wslview is only available on WSL (Windows Subsystem for Linux)${NC}"
         return 1
     fi
-    
+
     install_tool "wslview (wslu)" "$1" \
         "" \
         "wslu" "" "" \
+        "none" "" "" ""
+}
+
+# privoxy - HTTP forward proxy (useful for system-wide proxy configuration)
+install_privoxy() {
+    install_tool "privoxy" "$1" \
+        "privoxy" \
+        "privoxy" "" "" \
         "none" "" "" ""
 }
 
@@ -642,7 +650,7 @@ show_menu() {
 # Install specific tools from comma-separated list (for --tools option)
 install_selected_tools() {
     local tool_list="$1"
-    local valid_tools=("fzf" "fd" "rg" "bat" "eza" "zoxide" "starship" "qrencode" "7z" "wslview")
+    local valid_tools=("fzf" "fd" "rg" "bat" "eza" "zoxide" "starship" "qrencode" "7z" "privoxy" "wslview")
     
     # Convert comma-separated list to array
     IFS=',' read -ra tools <<< "$tool_list"
@@ -678,8 +686,8 @@ install_selected_tools() {
 }
 
 install_all() {
-    local tools=("fzf" "fd" "rg" "bat" "eza" "zoxide" "starship" "qrencode" "7z")
-    
+    local tools=("fzf" "fd" "rg" "bat" "eza" "zoxide" "starship" "qrencode" "7z" "privoxy")
+
     # Add wslview only if running in WSL
     if grep -qi microsoft /proc/version 2>/dev/null; then
         tools+=("wslview")
@@ -705,7 +713,7 @@ install_all() {
 }
 
 select_tools() {
-    local tools=("fzf" "fd" "rg" "bat" "eza" "zoxide" "starship" "qrencode" "7z")
+    local tools=("fzf" "fd" "rg" "bat" "eza" "zoxide" "starship" "qrencode" "7z" "privoxy")
     local descriptions=(
         "Fuzzy finder for interactive selection"
         "Fast file finder (alternative to find)"
@@ -716,8 +724,9 @@ select_tools() {
         "Cross-shell customizable prompt"
         "QR code generator for terminal"
         "7-Zip archive utility"
+        "HTTP forward proxy for system-wide proxy config"
     )
-    
+
     # Add wslview only if running in WSL
     if grep -qi microsoft /proc/version 2>/dev/null; then
         tools+=("wslview")

@@ -385,17 +385,21 @@ rep() {
     fi
 }
 
-# Manage SOCKS proxy via SSH
-# Usage: proxy [start <host>|status|stop]
+# Manage SOCKS proxy via SSH and environment variables
+# Usage: proxy [start <host>|status|stop|set-env|unset-env]
 # - proxy start <host>   : Start SOCKS proxy on localhost:1080
-# - proxy status         : Check if proxy is running
-# - proxy stop           : Stop the proxy
+# - proxy status         : Check if SOCKS proxy is running
+# - proxy stop           : Stop the SOCKS proxy
+# - proxy set-env        : Set HTTP proxy vars (detects privoxy on 8118 or SOCKS on 1080)
+# - proxy unset-env      : Unset HTTP proxy environment variables
 proxy() {
     if [ -z "$1" ]; then
-        echo "Usage: proxy [start <host>|status|stop]"
-        echo "  proxy start <host>  - Start proxy to <host> on localhost:1080"
-        echo "  proxy status        - Check if proxy is running"
-        echo "  proxy stop          - Stop the proxy"
+        echo "Usage: proxy [start <host>|status|stop|set-env|unset-env]"
+        echo "  proxy start <host>  - Start SOCKS proxy to <host> on localhost:1080"
+        echo "  proxy status        - Check if SOCKS proxy is running"
+        echo "  proxy stop          - Stop the SOCKS proxy"
+        echo "  proxy set-env       - Set HTTP_PROXY/HTTPS_PROXY (detects privoxy or SOCKS)"
+        echo "  proxy unset-env     - Unset HTTP proxy environment variables"
         return 1
     fi
 
@@ -453,9 +457,50 @@ proxy() {
             fi
             ;;
 
+        set-env)
+            # Check if privoxy is listening on 8118
+            local proxy_url
+            if (echo > /dev/tcp/127.0.0.1/8118) &>/dev/null 2>&1; then
+                proxy_url="http://127.0.0.1:8118"
+                echo "✓ Using Privoxy on :8118"
+            # Check if SOCKS proxy is listening on 1080
+            elif (echo > /dev/tcp/127.0.0.1/1080) &>/dev/null 2>&1; then
+                proxy_url="socks5://127.0.0.1:1080"
+                echo "✓ Using SOCKS proxy on :1080"
+            else
+                echo "⚠ No proxy detected on :8118 (privoxy) or :1080 (SOCKS)" >&2
+                return 1
+            fi
+
+            # Export proxy environment variables
+            export HTTP_PROXY="$proxy_url"
+            export HTTPS_PROXY="$proxy_url"
+            export ALL_PROXY="$proxy_url"
+            export NO_PROXY="localhost,127.0.0.1,::1"
+
+            # Also export lowercase variants for compatibility
+            export http_proxy="$proxy_url"
+            export https_proxy="$proxy_url"
+            export all_proxy="$proxy_url"
+            export no_proxy="localhost,127.0.0.1,::1"
+
+            echo "✓ Proxy environment variables set:"
+            echo "  HTTP_PROXY=$proxy_url"
+            echo "  HTTPS_PROXY=$proxy_url"
+            echo "  ALL_PROXY=$proxy_url"
+            echo "  NO_PROXY=localhost,127.0.0.1,::1"
+            ;;
+
+        unset-env)
+            # Unset all proxy-related environment variables
+            unset HTTP_PROXY HTTPS_PROXY ALL_PROXY NO_PROXY
+            unset http_proxy https_proxy all_proxy no_proxy
+            echo "✓ Proxy environment variables unset"
+            ;;
+
         *)
             echo "Unknown command: $cmd" >&2
-            echo "Usage: proxy [start <host>|status|stop]"
+            echo "Usage: proxy [start <host>|status|stop|set-env|unset-env]"
             return 1
             ;;
     esac
